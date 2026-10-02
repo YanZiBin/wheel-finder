@@ -6,13 +6,16 @@ import type { Kind, Suggestion } from '../types'
 const TOOL = 'mcp__wheel-finder__set_links'
 const items = atom({ plugin: 'wheel-finder', key: 'items' } as const, [] as Suggestion[])
 const page = atom({ plugin: 'wheel-finder', key: 'page' } as const, 0)
+const dismissed = atom({ plugin: 'wheel-finder', key: 'dismissed' } as const, [] as string[])
 
 // the description is fixed for the whole session, so registering it never changes the cached prompt prefix
 const DESCRIPTION = `Show the user existing open-source options above their prompt, so they do not rebuild what already exists. The user clicks a link to read more; this tool never installs or runs anything.
 
-When the conversation is about to build something, or needs a capability that an existing GitHub project, MCP server, skill or plugin might already provide, first search for it (for example \`gh search repos\` or web search), check what you found, then call this tool with the 1 to 3 best candidates. Replace the whole list on every call. Call it with an empty list when the topic has moved on. Do not call it when nothing relevant exists or the conversation is not about building or choosing tools.
+Be proactive. Whenever the conversation touches something an open-source project, library, tool, MCP server, skill or plugin might plausibly already do, run a quick search (for example \`gh search repos\` or a web search; one or two queries, do not let it hold up your answer), check what you found, then call this tool with the 1 to 3 best candidates. That includes: a feature or tool the user wants built, a file format or conversion, an integration with a service, a workflow or automation, a capability you are about to hand-write code for, and a problem that many people have probably solved. Also search when the user only mentions the need in passing.
 
-Only use URLs you actually saw in search results or on the page; never write a URL from memory. Keep "why" to one short line about why it fits this conversation. Fill stars, updated and license only from what you saw.`
+Skip it for: small edits or bug fixes in the user's own code, questions that need only an explanation, writing and editing text, and logic that is specific to the user's private project. Do not search the same topic twice, and do not call it when nothing good turns up.
+
+Replace the whole list on every call, and call it with an empty list when the topic has moved on. Prefer projects that are maintained and have a clear license; fill stars, updated and license only from what you saw. Only use URLs you actually saw in search results or on the page; never write a URL from memory. Keep "why" to one short line about why it fits this conversation. If the result says some links were skipped because the user dismissed them, do not bring them back.`
 
 const SCHEMA = {
   type: 'object',
@@ -73,6 +76,9 @@ const hostOf = (href: string) => {
   }
 }
 
+// links the user cleared are compared by a loose key, so a trailing slash or a fragment does not bring one back
+const keyOf = (href: string) => href.replace(/[?#].*$/, '').replace(/\/+$/, '').toLowerCase()
+
 const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '')
 
 export const register: Register = on => {
@@ -108,10 +114,18 @@ export const register: Register = on => {
         license: str(r.license, 24) || undefined
       })
     }
-    await update($, items, () => clean)
+    const gone = new Set(await read($, dismissed))
+    const shown = clean.filter(c => !gone.has(keyOf(c.href)))
+    const skipped = clean.length - shown.length
+    await update($, items, () => shown)
     await update($, page, () => 0)
     const dropped = raw.length - clean.length
-    return { result: `Shown: ${clean.length}.${dropped > 0 ? ` Dropped ${dropped} with a missing name or a URL that is not a clean https link.` : ''}` }
+    return {
+      result:
+        `Shown: ${shown.length}.` +
+        (skipped > 0 ? ` Skipped ${skipped} the user already dismissed; do not suggest them again.` : '') +
+        (dropped > 0 ? ` Dropped ${dropped} with a missing name or a URL that is not a clean https link.` : '')
+    }
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
@@ -123,6 +137,10 @@ export const register: Register = on => {
     const s = list[at]
     const host = hostOf(s.href)
     const meta = [host !== 'github.com' && host !== '' ? `↗ ${host}` : '', s.updated, s.license].filter(Boolean).join(' · ')
+    const dismiss = async () => {
+      await update($, dismissed, (old: string[]) => [...old, ...list.map(x => keyOf(x.href))])
+      await update($, items, () => [])
+    }
     const go = (to: number) => update($, page, () => (to + list.length) % list.length)
 
     return (
@@ -147,7 +165,7 @@ export const register: Register = on => {
             {list.length > 1 && <Button key="prev" plain dimColor label="‹" onPress={() => go(at - 1)} />}
             {list.length > 1 && <Text dimColor>{`${at + 1}/${list.length}`}</Text>}
             {list.length > 1 && <Button key="next" plain dimColor label="›" onPress={() => go(at + 1)} />}
-            <Button key="clear" plain dimColor label="×" onPress={() => update($, items, () => [])} />
+            <Button key="clear" plain dimColor label="×" onPress={() => dismiss()} />
           </Box>
         </Box>
         {s.why !== '' && <Text dimColor wrap="truncate">{`↳ ${s.why}`}</Text>}

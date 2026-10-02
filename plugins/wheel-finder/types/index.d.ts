@@ -12,6 +12,6 @@ export type Suggestion = {
 
 declare module 'claude-code' {
   interface PluginState {
-    'wheel-finder': { items: Suggestion[]; page: number }
+    'wheel-finder': { items: Suggestion[]; page: number; dismissed: string[] }
   }
 }

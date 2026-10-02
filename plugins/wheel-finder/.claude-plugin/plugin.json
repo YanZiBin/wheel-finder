@@ -1,6 +1,6 @@
 {
   "name": "wheel-finder",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Don't reinvent the wheel: finds existing GitHub projects, MCP servers, skills and plugins that fit the conversation and shows them in a small pager above the prompt.",
   "author": {
     "name": "Zibin Yan",
