@@ -2,10 +2,20 @@
   "name": "wheel-finder",
   "version": "0.1.0",
   "description": "Don't reinvent the wheel: finds existing GitHub projects, MCP servers, skills and plugins that fit the conversation and shows them in a small pager above the prompt.",
-  "author": { "name": "Zibin Yan", "url": "https://github.com/YanZiBin" },
+  "author": {
+    "name": "Zibin Yan",
+    "url": "https://github.com/YanZiBin"
+  },
   "homepage": "https://github.com/YanZiBin/wheel-finder",
   "repository": "https://github.com/YanZiBin/wheel-finder",
   "license": "MIT",
-  "keywords": ["mod", "github", "discovery", "mcp", "skills"],
-  "types": "./types/index.d.ts"
+  "keywords": [
+    "mod",
+    "github",
+    "discovery",
+    "mcp",
+    "skills"
+  ],
+  "types": "./types/index.d.ts",
+  "icon": ".claude-plugin/icon.png"
 }

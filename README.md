@@ -21,6 +21,7 @@ Stops you rebuilding what already exists. When the conversation is about to buil
 Each candidate shows a kind tag (Project, MCP, Skill, Plugin, Other), the name as a link, stars, last update, license, and a one-line reason. `‹ 1/3 ›` pages through them and `×` clears the list.
 
 - It does not search by itself. It registers one tool, `mcp__wheel-finder__set_links`, and its description tells the model when to search and to call it. The model decides, so how often it fires depends on how well the model follows that description.
+- The mod answers calls to its own tool, `mcp__wheel-finder__set_links`, itself: it stores the list and returns a short status line. It does not stand in for any other tool.
 - The tool never installs or runs anything; it only displays links.
 - Links must be clean `https` URLs; anything else is dropped before drawing.
 - The tool description is fixed for the whole session, so using it does not change the cached prompt prefix.
