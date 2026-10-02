@@ -22,6 +22,7 @@ Each candidate shows a kind tag (Project, MCP, Skill, Plugin, Other), the name a
 
 - It does not search by itself. It registers one tool, `mcp__wheel-finder__set_links`, and its description tells the model when to search and to call it. The model decides, so how often it fires depends on how well the model follows that description.
 - The mod answers calls to its own tool, `mcp__wheel-finder__set_links`, itself: it stores the list and returns a short status line. It does not stand in for any other tool.
+- It draws above whatever other plugins show in the band above the prompt instead of replacing it, so it can sit next to other plugins that do the same.
 - The tool never installs or runs anything; it only displays links.
 - Links must be clean `https` URLs; anything else is dropped before drawing.
 - The tool description is fixed for the whole session, so using it does not change the cached prompt prefix.

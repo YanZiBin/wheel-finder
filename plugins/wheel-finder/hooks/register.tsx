@@ -129,8 +129,10 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    // what the plugins beneath drew (or nothing): ours goes above it instead of replacing it
+    const below = await next(e)
     const list = await read($, items)
-    if (e.props.hasSurvey || list.length === 0) return next(e)
+    if (e.props.hasSurvey || list.length === 0) return below
 
     const { Box, Button, Link, Svg, Text } = $.ui.resolve(e)
     const at = Math.min(Math.max(await read($, page), 0), list.length - 1)
@@ -143,7 +145,7 @@ export const register: Register = on => {
     }
     const go = (to: number) => update($, page, () => (to + list.length) % list.length)
 
-    return (
+    const mine = (
       <Box flexDirection="column" paddingX={1}>
         <Box flexDirection="row" alignItems="center" justifyContent="space-between">
           <Box flexDirection="row" alignItems="center" gap={1}>
@@ -171,5 +173,7 @@ export const register: Register = on => {
         {s.why !== '' && <Text dimColor wrap="truncate">{`↳ ${s.why}`}</Text>}
       </Box>
     )
+
+    return below ? <Box flexDirection="column">{mine}{below}</Box> : mine
   })
 }
