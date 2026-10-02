@@ -3,9 +3,9 @@ import type { Register } from 'claude-code'
 
 import type { Kind, Suggestion } from '../types'
 
-const TOOL = 'mcp__repo-links__set_links'
-const items = atom({ plugin: 'repo-links', key: 'items' } as const, [] as Suggestion[])
-const page = atom({ plugin: 'repo-links', key: 'page' } as const, 0)
+const TOOL = 'mcp__wheel-finder__set_links'
+const items = atom({ plugin: 'wheel-finder', key: 'items' } as const, [] as Suggestion[])
+const page = atom({ plugin: 'wheel-finder', key: 'page' } as const, 0)
 
 // the description is fixed for the whole session, so registering it never changes the cached prompt prefix
 const DESCRIPTION = `Show the user existing open-source options above their prompt, so they do not rebuild what already exists. The user clicks a link to read more; this tool never installs or runs anything.

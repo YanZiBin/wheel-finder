@@ -8,19 +8,19 @@ A mod is code that runs inside your Claude Code session with the same access Cla
 
 ```
 /plugin marketplace add YanZiBin/claude-code-mods
-/plugin install repo-links@yan-mods
+/plugin install wheel-finder@yan-mods
 /reload-plugins
 ```
 
 Needs a Claude Code build that supports mods (2.1.287 or later). The mod API can change between releases.
 
-## repo-links
+## wheel-finder
 
 Stops you rebuilding what already exists. When the conversation is about to build something, or needs a capability that a GitHub project, MCP server, skill or plugin might already provide, the model searches for it (for example with `gh search repos`) and puts the best one to three candidates in a small pager above the prompt.
 
 Each candidate shows a kind tag (Project, MCP, Skill, Plugin, Other), the name as a link, stars, last update, license, and a one-line reason. `‹ 1/3 ›` pages through them and `×` clears the list.
 
-- It does not search by itself. It registers one tool, `mcp__repo-links__set_links`, and its description tells the model when to search and to call it. The model decides, so how often it fires depends on how well the model follows that description.
+- It does not search by itself. It registers one tool, `mcp__wheel-finder__set_links`, and its description tells the model when to search and to call it. The model decides, so how often it fires depends on how well the model follows that description.
 - The tool never installs or runs anything; it only displays links.
 - Links must be clean `https` URLs; anything else is dropped before drawing.
 - The tool description is fixed for the whole session, so using it does not change the cached prompt prefix.

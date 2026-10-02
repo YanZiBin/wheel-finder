@@ -1,7 +1,7 @@
 {
-  "name": "repo-links",
+  "name": "wheel-finder",
   "version": "0.1.0",
-  "description": "Shows existing GitHub projects, MCP servers, skills and plugins that fit the conversation, as a small pager above the prompt.",
+  "description": "Don't reinvent the wheel: finds existing GitHub projects, MCP servers, skills and plugins that fit the conversation and shows them in a small pager above the prompt.",
   "author": { "name": "Zibin Yan", "url": "https://github.com/YanZiBin" },
   "homepage": "https://github.com/YanZiBin/claude-code-mods",
   "repository": "https://github.com/YanZiBin/claude-code-mods",

@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "repo-links",
-      "source": "./plugins/repo-links",
-      "description": "Shows existing GitHub projects, MCP servers, skills and plugins that fit the conversation, as a small pager above the prompt."
+      "name": "wheel-finder",
+      "source": "./plugins/wheel-finder",
+      "description": "Don't reinvent the wheel: finds existing GitHub projects, MCP servers, skills and plugins that fit the conversation and shows them in a small pager above the prompt."
     }
   ]
 }
