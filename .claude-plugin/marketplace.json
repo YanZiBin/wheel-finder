@@ -1,0 +1,15 @@
+{
+  "name": "yan-mods",
+  "description": "Small Claude Code mods, shipped as plugins.",
+  "owner": {
+    "name": "Zibin Yan",
+    "url": "https://github.com/YanZiBin"
+  },
+  "plugins": [
+    {
+      "name": "repo-links",
+      "source": "./plugins/repo-links",
+      "description": "Shows existing GitHub projects, MCP servers, skills and plugins that fit the conversation, as a small pager above the prompt."
+    }
+  ]
+}
