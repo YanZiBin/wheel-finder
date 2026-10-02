@@ -1,6 +1,6 @@
 {
-  "name": "yan-mods",
-  "description": "Small Claude Code mods, shipped as plugins.",
+  "name": "wheel-finder",
+  "description": "A Claude Code mod that finds existing projects before you rebuild them.",
   "owner": {
     "name": "Zibin Yan",
     "url": "https://github.com/YanZiBin"

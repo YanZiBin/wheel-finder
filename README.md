@@ -1,20 +1,20 @@
-# claude-code-mods
+# wheel-finder
 
-Small [Claude Code mods](https://claude.dev/blog/getting-started-with-claude-code-mods/), shipped as plugins.
+Don't reinvent the wheel. A [Claude Code mod](https://claude.dev/blog/getting-started-with-claude-code-mods/) that finds existing projects before you rebuild them.
 
-A mod is code that runs inside your Claude Code session with the same access Claude Code has. Read the source before you install it; every mod here is a single short file.
+A mod is code that runs inside your Claude Code session with the same access Claude Code has. Read the source before you install it; this one is a single short file, `plugins/wheel-finder/hooks/register.tsx`.
 
 ## Install
 
 ```
-/plugin marketplace add YanZiBin/claude-code-mods
-/plugin install wheel-finder@yan-mods
+/plugin marketplace add YanZiBin/wheel-finder
+/plugin install wheel-finder@wheel-finder
 /reload-plugins
 ```
 
 Needs a Claude Code build that supports mods (2.1.287 or later). The mod API can change between releases.
 
-## wheel-finder
+## What it does
 
 Stops you rebuilding what already exists. When the conversation is about to build something, or needs a capability that a GitHub project, MCP server, skill or plugin might already provide, the model searches for it (for example with `gh search repos`) and puts the best one to three candidates in a small pager above the prompt.
 
