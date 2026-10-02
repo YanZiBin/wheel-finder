@@ -50,15 +50,26 @@ const chip = (label: string, hex: string) => {
 
 const KIND_LABEL: Record<Kind, string> = { mcp: 'MCP', skill: 'Skill', plugin: 'Plugin', project: 'Project', other: 'Other' }
 
-// a Link with a bad href refuses the whole tree, so only a clean https URL gets through
+// a Link with a bad href refuses the whole tree, so the URL is normalised the way `new URL(href).href` spells it:
+// https only, no user info, ASCII only (non-ASCII is percent-encoded by URL, a raw "@" is encoded here)
 const cleanUrl = (raw: unknown): string | null => {
-  if (typeof raw !== 'string' || raw.length > 2048) return null
+  if (typeof raw !== 'string') return null
   try {
-    const u = new URL(raw)
-    if (u.protocol !== 'https:' || u.username || u.password || u.href !== raw) return null
-    return /^[\x21-\x7e]+$/.test(u.href) && !u.href.includes('@') ? u.href : null
+    const u = new URL(raw.trim())
+    if (u.protocol !== 'https:' || u.username || u.password) return null
+    const href = u.href.replace(/@/g, '%40')
+    return href.length <= 2048 && /^[\x21-\x7e]+$/.test(href) ? href : null
   } catch {
     return null
+  }
+}
+
+// the host is shown next to any link that is not on github.com, so a look-alike address is visible before the click
+const hostOf = (href: string) => {
+  try {
+    return new URL(href).hostname.replace(/^www\./, '')
+  } catch {
+    return ''
   }
 }
 
@@ -72,7 +83,15 @@ export const register: Register = on => {
   })
 
   on('tool.call', { tool: TOOL }, async ($, e) => {
-    const raw = (Array.isArray(e.items) ? e.items : []) as Record<string, unknown>[]
+    let given: unknown = e.items
+    if (typeof given === 'string') {
+      try {
+        given = JSON.parse(given) // some models send the array as a JSON string
+      } catch {
+        given = []
+      }
+    }
+    const raw = (Array.isArray(given) ? given : []).filter(x => x && typeof x === 'object') as Record<string, unknown>[]
     const clean: Suggestion[] = []
     for (const r of raw.slice(0, 3)) {
       const href = cleanUrl(r.url)
@@ -102,7 +121,8 @@ export const register: Register = on => {
     const { Box, Button, Link, Svg, Text } = $.ui.resolve(e)
     const at = Math.min(Math.max(await read($, page), 0), list.length - 1)
     const s = list[at]
-    const meta = [s.updated, s.license].filter(Boolean).join(' · ')
+    const host = hostOf(s.href)
+    const meta = [host !== 'github.com' && host !== '' ? `↗ ${host}` : '', s.updated, s.license].filter(Boolean).join(' · ')
     const go = (to: number) => update($, page, () => (to + list.length) % list.length)
 
     return (
